@@ -26,6 +26,7 @@ B5ZC00
 from urllib import request
 import re
 
+#此处还可以直接用Biopython中的ExPASy解决，代码见最后，参考自《Python生物信息学数据管理（Manaing your Biological Data with Python)》
 def fetch_fasta_file(uniprot_id):
 	url = 'http://www.uniprot.org/uniprot/' + uniprot_id + '.fasta'
 	response = request.urlopen(url)
@@ -56,7 +57,9 @@ def parse_fasta(file):
 
 
 def search_motif(seq_name, sequence):
-	print(seq_name)
+	#其中一个作者的方法
+	#print(seq_name)
+	'''
 	for i in range(len(sequence) - 3):
 		if sequence[i] != 'N':
 			continue
@@ -70,18 +73,21 @@ def search_motif(seq_name, sequence):
 		#yield i
 		
 '''
+	#彩正则表达式
 	pattern = re.compile('N[^P][ST][^P]')
-	all = pattern.findall(sequence)
-	if all:
+	ite = pattern.finditer(sequence)
+
+	if ite:
 		print(seq_name)
-		print('\n')
-		if len(all) > 1:
-			for s in iter:
-				print(s.start() + '\t')
-				print(s.end() + '\t')
+		#print('\n')
+		for s in ite:
+			print(s.start(), end="")
+			print('\t', end="")
+			#print(s.end(), end="")
+			#print('\t')
 	else:
 		print(seq_name, 'Not Founded the motif')
-'''
+
 
 
 
@@ -98,9 +104,9 @@ for line in inf:
 '''
 from Bio import ExPASy
 from Bio import SeqIO
-handle = ExPASy.get_sprot_raw("P04637")
+handle = ExPASy.get_sprot_raw(uniprot_id)
 seq_record = SeqIO.read(handle, "swiss")
-out = open('myfile.fasta','w')
+out = open(uniprot_id + '.fasta','w')
 fasta = SeqIO.write(seq_record, out, "fasta")
 out.close()
 '''
