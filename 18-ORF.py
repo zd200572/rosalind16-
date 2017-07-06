@@ -25,7 +25,7 @@ MTPRLGLESLLE
 '''
 seq = 'AGCCATGTAGCTAACTCAGGTTACATGGGGATGACCCCGCGACTTGGATTAGAGTCTCTTTTGGAATAAGCCTGAATGATCCGAGTAGCATCTCAG'
 
-def get_rna_dict()
+def get_rna_dict():
 	rna_dict = {}
 	for line in open('codons.txt').readlines():
 		codon = line.strip().split()[0]
@@ -41,14 +41,35 @@ def transcipts(seq):
 	mrna2 = ''
 	for nucleotide in seq:
 		if nucleotide == 'T':
-			mrna1 += 'U':
+			mrna1 += 'U'
 		else:
 			mrna1 += nucleotide
-	dict = {A:U, T:A, G:C, C:G}
-	for nucleotide in seq:
-		for nucleotide in dict.keys():
+	dict = {'A':'U', 'T':'A', 'G':'C', 'C':'G'}
+	for nucleotide in dict.keys() and seq:
 			mrna2 += dict[nucleotide]
 	return mrna1, mrna2
 
 
-def 
+def find_orf(mrna):
+	i = 0
+	list = []
+	flag = 0
+	protein = ''
+	for i in range(len(mrna) - 3):
+		if mrna[i:i+3] == 'AUG' and flag == 0:
+			flag = 1
+		if rna_dict[mrna[i:i+3]] == 'Stop' and flag == 1:
+			list.append(protein)
+			protein = ''
+			flag = 0
+
+		elif  flag == 1 and rna_dict[mrna[i:i+3]] != 'Stop':
+			protein += rna_dict[mrna[i:i+3]]
+	return list
+
+
+rna_dict = get_rna_dict()
+mrna1, mrna2 = transcipts(seq)
+print(mrna2 + '\n' )
+list = find_orf(mrna1) + find_orf(mrna2)
+print(list)
